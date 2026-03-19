@@ -1,7 +1,7 @@
-import { useVideoPlayer, VideoView } from "expo-video";
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
 import { theme } from "@/constants/theme";
+import { useVideoPlayer, VideoView } from "expo-video";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
   const videoSource =
@@ -14,7 +14,7 @@ export default function LoginScreen() {
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <VideoView
         style={StyleSheet.absoluteFill}
         player={player}
@@ -25,50 +25,80 @@ export default function LoginScreen() {
         pointerEvents="none"
       />
 
-      <View style={styles.topTitle}>
-        <Text style={styles.title}>Tik Tok Clone</Text>
-        <Text style={styles.text}>
+      <View style={styles.overlay}>
+        <Text style={styles.titleText}>TikTok Clone</Text>
+
+        <Text style={styles.subtitleText}>
           The best place to upload videos and images for everyone to see.
         </Text>
-        <View style={styles.signGoogle}>
+
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={() => {
+            console.log("Google Sign clicked");
+          }}
+        >
           <Image
             source={require("../assets/images/google.png")}
-            style={{ width: 24, height: 24 }}
+            style={styles.googleIcon}
           />
-          <Text>Sign In With Google</Text>
-        </View>
+          <Text style={styles.googleButtonText}>Sign in with Google</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  topTitle: {
+  container: {
     flex: 1,
-    display: "flex",
+  },
+
+  overlay: {
+    flex: 1,
     alignItems: "center",
-    paddingTop: 100,
+    justifyContent: "center",
     paddingHorizontal: 20,
     backgroundColor: theme.backgroundTransp,
   },
-  title: {
+
+  titleText: {
     color: "#fff",
-    fontSize: 35,
+    fontSize: 36,
+    fontWeight: "700",
+    position: "absolute",
+    top: 100,
   },
-  text: {
+
+  subtitleText: {
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
     fontWeight: "300",
-    marginTop: 16,
+    position: "absolute",
+    top: 160,
   },
-  signGoogle: {
-    display: "flex",
-    alignContent: "center",
-    gap: 8,
+
+  googleButton: {
     flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     backgroundColor: "#fff",
-    padding:8,
-    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    position: "absolute",
+    bottom: 130,
+  },
+
+  googleButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#000",
+  },
+
+  googleIcon: {
+    width: 24,
+    height: 24,
   },
 });
