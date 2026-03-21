@@ -1,9 +1,33 @@
 import { theme } from "@/constants/theme";
+import { useAuth, useOAuth } from "@clerk/expo";
+import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { isSignedIn, isLoaded } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace("/home");
+    }
+  }, [isLoaded, isSignedIn]);
+
+  const handleLogin = async () => {
+    try {
+      const { createdSessionId, setActive } = await startOAuthFlow();
+
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace("/home");
+      }
+    } catch (err) {
+      console.error("OAuth error:", err);
+    }
+  };
   const videoSource =
     "https://cdn.pixabay.com/video/2025/08/12/296958_large.mp4";
 
@@ -32,14 +56,9 @@ export default function LoginScreen() {
           The best place to upload videos and images for everyone to see.
         </Text>
 
-        <TouchableOpacity
-          style={styles.googleButton}
-          onPress={() => {
-            console.log("Google Sign clicked");
-          }}
-        >
+        <TouchableOpacity style={styles.googleButton} onPress={handleLogin}>
           <Image
-            source={require("../assets/images/google.png")}
+            source={require("../../assets/images/google.png")}
             style={styles.googleIcon}
           />
           <Text style={styles.googleButtonText}>Sign in with Google</Text>
