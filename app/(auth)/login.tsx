@@ -1,5 +1,6 @@
 import { theme } from "@/constants/theme";
-import { useAuth, useOAuth } from "@clerk/expo";
+import { supabase } from "@/lib/supabase";
+import { useAuth, useOAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import React, { useEffect } from "react";
@@ -16,18 +17,18 @@ export default function LoginScreen() {
     }
   }, [isLoaded, isSignedIn]);
 
-  const handleLogin = async () => {
-    try {
-      const { createdSessionId, setActive } = await startOAuthFlow();
 
-      if (createdSessionId && setActive) {
-        await setActive({ session: createdSessionId });
-        router.replace("/home");
-      }
-    } catch (err) {
-      console.error("OAuth error:", err);
+const handleLogin = async () => {
+  try {
+    const { createdSessionId, setActive } = await startOAuthFlow();
+
+    if (createdSessionId && setActive) {
+      await setActive({ session: createdSessionId });
     }
-  };
+  } catch (err) {
+    console.error("OAuth error:", err);
+  }
+};
   const videoSource =
     "https://cdn.pixabay.com/video/2025/08/12/296958_large.mp4";
 
