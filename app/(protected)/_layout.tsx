@@ -8,11 +8,9 @@ export default function AuthRoutesLayout() {
     return null;
   }
 
-  console.log(isSignedIn)
-
   if (!isSignedIn) {
     return <Redirect href={"/login"} />;
   }
 
-  return <Stack />;
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

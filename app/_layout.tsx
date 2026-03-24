@@ -15,10 +15,8 @@ export default function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ThemeProvider value={DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="(auth)/login"
-            options={{ presentation: "modal", title: "Modal" }}
-          />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(protected)" />
         </Stack>
       </ThemeProvider>
     </ClerkProvider>

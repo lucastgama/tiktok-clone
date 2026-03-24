@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { useUser } from "@clerk/expo";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-export default function Home() {
+export default function HomeScreen() {
   const { user } = useUser();
 
   useEffect(() => {
@@ -29,13 +29,11 @@ export default function Home() {
           email: user.primaryEmailAddress?.emailAddress,
           name: user.firstName,
           username: user.primaryEmailAddress?.emailAddress?.split("@")[0],
+          profileImage: user.imageUrl,
         });
-
         if (insertError) {
           console.log("INSERT ERROR:", insertError);
-        } 
-      } else {
-        console.log("USER JÁ EXISTE");
+        }
       }
     };
 
@@ -46,6 +44,10 @@ export default function Home() {
     <View>
       <Text>Usuário logado 🎉</Text>
       <Text>{user?.primaryEmailAddress?.emailAddress}</Text>
+      <Image
+        source={{ uri: user?.imageUrl }}
+        style={{ width: 100, height: 100, borderRadius: 50 }}
+      />
     </View>
   );
 }
