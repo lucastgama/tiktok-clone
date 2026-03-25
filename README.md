@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+# TikTok Clone (Expo + Clerk + AWS + Supabase)
+Este projeto é um clone do TikTok desenvolvido com React Native (Expo) com o objetivo de aprofundar conhecimentos em arquitetura mobile moderna e integração com serviços cloud.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Objetivo
+O principal objetivo deste projeto é evoluir habilidades em:
 
-## Get started
+- Integração com AWS (armazenamento de vídeos e thumbnails)
+- Autenticação com Clerk
+- Gerenciamento de dados com Supabase
+- Estruturação de projetos escaláveis no React Native
 
-1. Install dependencies
+## Arquitetura
+O projeto utiliza:
 
-   ```bash
-   npm install
-   ```
+- Expo Router (file-based routing) para navegação
+- Arquitetura modular baseada em separação de responsabilidades
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Estrutura principal:
 
 ```bash
-npm run reset-project
-```
+app/
+ ├── (tabs)/        # Navegação principal (home, explore, etc)
+ ├── (protected)/   # Rotas protegidas por autenticação
+ ├── login.tsx      # Tela de login
+ ├── _layout.tsx    # Layout global
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+components/         # Componentes reutilizáveis
+hooks/              # Hooks customizados
+lib/                # Integrações (API, AWS, Supabase, Clerk)
+constants/          # Constantes globais
+assets/             # Recursos estáticos
 
-## Learn more
+## Autenticação
+- Gerenciada via Clerk
+- Rotas protegidas organizadas dentro de (protected)
 
-To learn more about developing your project with Expo, look at the following resources:
+## Backend e Serviços
+- AWS S3 para armazenamento de vídeos e thumbnails
+- Supabase para dados de usuário e configurações
+- Clerk para autenticação e gerenciamento de usuários
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Aprendizados
+Este projeto foca em:
+- Estruturação de apps escaláveis
+- Separação entre UI, lógica e serviços
+- Preparação para evolução futura para um padrão mais robusto (como MVC ou Clean Architecture)
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Próximos passos
+- Refatorar para um padrão mais próximo de MVC ou Clean Architecture
+- Separar camada de serviços (API) do front-end
+- Implementar cache e otimizações de performance
+- Melhorar gerenciamento de estado
