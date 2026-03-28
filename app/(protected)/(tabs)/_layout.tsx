@@ -1,6 +1,6 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function TabLayout() {
   return (
@@ -39,6 +39,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="user" size={size} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="play/index"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

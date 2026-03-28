@@ -17,6 +17,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(protected)" />
+          <Stack.Screen name="play" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </ClerkProvider>

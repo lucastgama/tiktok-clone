@@ -1,10 +1,26 @@
-import { View, Text, Image, StyleSheet } from "react-native";
-import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { router } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function VideoThumbnailItem({ video }: any) {
+export default function VideoThumbnailItem({
+  video,
+  videoList,
+  videoIndex,
+}: any) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() =>
+        router.push({
+          pathname: "/play",
+          params: {
+            videos: JSON.stringify(videoList ?? [video]),
+            initialIndex: videoIndex ?? 0,
+          },
+        })
+      }
+    >
       <View style={styles.overlay}>
         <View style={styles.rowBetween}>
           <View style={styles.userInfo}>
@@ -25,7 +41,7 @@ export default function VideoThumbnailItem({ video }: any) {
       </View>
 
       <Image source={{ uri: video?.thumbnail }} style={styles.thumbnail} />
-    </View>
+    </TouchableOpacity>
   );
 }
 

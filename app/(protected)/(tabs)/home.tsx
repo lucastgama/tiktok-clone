@@ -2,18 +2,25 @@ import VideoThumbnailItem from "@/components/ui/videoThumbnailItem";
 import { supabase } from "@/lib/supabase";
 import { useUser } from "@clerk/expo";
 import { useEffect, useState } from "react";
-import { FlatList, Image, Text, View, StyleSheet } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const { user } = useUser();
   const [videoList, setVideoList] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadCounter, setLoadCounter] = useState<number>(0);
 
   useEffect(() => {
     if (!user?.id) return;
 
     syncUser();
-    getAllVideos();
+    setLoadCounter(0);
   }, [user?.id]);
+
+  useEffect(() => {
+    if (loadCounter === 0) return;
+    getAllVideos();
+  }, [loadCounter]);
 
   const syncUser = async () => {
     const { data: existingUser } = await supabase
@@ -34,14 +41,19 @@ export default function HomeScreen() {
   };
 
   const getAllVideos = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("PostLists")
       .select(`*, userId:Users (profileImage, username)`)
+      .range(loadCounter, loadCounter + 7)
       .order("created_at", { ascending: false });
 
-    if (error) return;
-
-    setVideoList(data || []);
+    if (error) {
+      setLoading(false);
+      return;
+    }
+    setVideoList((videoList) => [...videoList, ...(data as any)]);
+    setLoading(false);
   };
 
   return (
@@ -55,9 +67,19 @@ export default function HomeScreen() {
         data={videoList}
         numColumns={2}
         keyExtractor={(item) => item.id?.toString()}
-        renderItem={({ item }) => <VideoThumbnailItem video={item} />}
+        renderItem={({ item, index }) => (
+          <VideoThumbnailItem
+            video={item}
+            videoList={videoList}
+            videoIndex={index}
+          />
+        )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        onRefresh={getAllVideos}
+        refreshing={loading}
+        onEndReached={() => setLoadCounter((prev) => prev + 7)}
+        onEndReachedThreshold={0.2}
       />
     </View>
   );
