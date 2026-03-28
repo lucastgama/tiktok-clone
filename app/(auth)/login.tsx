@@ -1,5 +1,4 @@
 import { theme } from "@/constants/theme";
-import { supabase } from "@/lib/supabase";
 import { useAuth, useOAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
