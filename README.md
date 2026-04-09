@@ -1,52 +1,76 @@
 # TikTok Clone (Expo + Clerk + AWS + Supabase)
-Este projeto é um clone do TikTok desenvolvido com React Native (Expo) com o objetivo de aprofundar conhecimentos em arquitetura mobile moderna e integração com serviços cloud.
+
+Este projeto consiste em um clone do TikTok desenvolvido com React Native (Expo), com foco no aprimoramento de práticas modernas de arquitetura mobile e integração com serviços em nuvem.
+
+## Referência
+
+https://www.youtube.com/watch?v=L2tz0WAfQIU
 
 ## Objetivo
-O principal objetivo deste projeto é evoluir habilidades em:
 
-- Integração com AWS (armazenamento de vídeos e thumbnails)
-- Autenticação com Clerk
+O projeto tem como objetivo desenvolver experiência em:
+
+- Integração com AWS para armazenamento de vídeos e thumbnails
+- Autenticação utilizando Clerk
 - Gerenciamento de dados com Supabase
-- Estruturação de projetos escaláveis no React Native
+- Organização de projetos escaláveis em React Native
 
 ## Arquitetura
-O projeto utiliza:
+
+A aplicação utiliza:
 
 - Expo Router (file-based routing) para navegação
-- Arquitetura modular baseada em separação de responsabilidades
+- Estrutura modular com separação de responsabilidades
 
-### Estrutura principal:
+### Estrutura principal
 
-```bash
+```
 app/
- ├── (tabs)/        # Navegação principal (home, explore, etc)
- ├── (protected)/   # Rotas protegidas por autenticação
- ├── login.tsx      # Tela de login
- ├── _layout.tsx    # Layout global
+ ├── (tabs)/# Navegação principal (home, explore, etc)
+ ├── (protected)/# Rotas protegidas por autenticação
+ ├── login.tsx# Tela de login
+ ├── _layout.tsx# Layout global
 
-components/         # Componentes reutilizáveis
-hooks/              # Hooks customizados
-lib/                # Integrações (API, AWS, Supabase, Clerk)
-constants/          # Constantes globais
-assets/             # Recursos estáticos
+components/# Componentes reutilizáveis
+hooks/# Hooks customizados
+lib/# Integrações (API, AWS, Supabase, Clerk)
+constants/# Constantes globais
+assets/# Recursos estáticos
+```
 
 ## Autenticação
-- Gerenciada via Clerk
-- Rotas protegidas organizadas dentro de (protected)
 
-## Backend e Serviços
+A autenticação é gerenciada pelo Clerk, com rotas protegidas organizadas no diretório `(protected)`.
+
+## Backend e serviços
+
 - AWS S3 para armazenamento de vídeos e thumbnails
-- Supabase para dados de usuário e configurações
+- Supabase para persistência de dados de usuários e configurações
 - Clerk para autenticação e gerenciamento de usuários
 
-## Aprendizados
-Este projeto foca em:
-- Estruturação de apps escaláveis
-- Separação entre UI, lógica e serviços
-- Preparação para evolução futura para um padrão mais robusto (como MVC ou Clean Architecture)
+## Decisões de implementação
 
-## Próximos passos
-- Refatorar para um padrão mais próximo de MVC ou Clean Architecture
-- Separar camada de serviços (API) do front-end
-- Implementar cache e otimizações de performance
-- Melhorar gerenciamento de estado
+Durante o desenvolvimento, optei por:
+
+- Organizar as rotas com base no nível de acesso (público e protegido)
+- Utilizar layouts específicos por grupo de páginas
+- Padronizar nomes de arquivos em minúsculo
+- Nomear funções com inicial maiúscula
+- Identificar telas de visualização com o sufixo `Screen`
+
+Essas escolhas diferem do padrão apresentado no vídeo utilizado como referência, mas foram adotadas para melhorar a organização e a clareza do projeto.
+
+## Aprendizados
+
+Este projeto contribuiu para:
+
+- Melhor entendimento de estruturação de aplicações escaláveis
+- Separação entre interface, lógica e integrações externas
+- Preparação para adoção futura de padrões como MVC ou Clean Architecture
+
+## Próximos passos(Assim que possivel)
+
+- Evoluir a arquitetura para um padrão mais estruturado (MVC ou Clean Architecture)
+- Separar de forma mais clara a camada de serviços (API)
+- Implementar estratégias de cache e otimização de performance
+- Melhorar o gerenciamento de estado
