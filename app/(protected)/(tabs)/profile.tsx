@@ -63,6 +63,8 @@ export default function ProfileScreen() {
     user?.firstName ??
     "User";
 
+  const email = user?.primaryEmailAddress?.emailAddress ?? "No email";
+
   return (
     <FlatList
       data={videoList}
@@ -83,7 +85,7 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
           <Text style={styles.username}>{username}</Text>
-
+          <Text style={styles.statLabel}>{email}</Text>
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <FontAwesome
