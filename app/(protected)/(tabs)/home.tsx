@@ -14,7 +14,7 @@ export default function HomeScreen() {
     if (!user?.id) return;
 
     syncUser();
-    setLoadCounter(0);
+    getAllVideos();
   }, [user?.id]);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function HomeScreen() {
         contentContainerStyle={styles.listContent}
         onRefresh={getAllVideos}
         refreshing={loading}
-        onEndReached={() => setLoadCounter((prev) => prev + 7)}
+        onEndReached={() => setLoadCounter((prev) => prev + 8)}
         onEndReachedThreshold={0.2}
       />
     </View>

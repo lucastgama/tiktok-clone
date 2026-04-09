@@ -1,6 +1,7 @@
+import { supabase } from "@/lib/supabase";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function VideoThumbnailItem({
@@ -8,6 +9,20 @@ export default function VideoThumbnailItem({
   videoList,
   videoIndex,
 }: any) {
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    if (!video?.id) return;
+    const fetchLikes = async () => {
+      const { count } = await supabase
+        .from("VideoLikes")
+        .select("id", { count: "exact", head: true })
+        .eq("postIdRef", video.id);
+      setLikeCount(count ?? 0);
+    };
+    fetchLikes();
+  }, [video?.id]);
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -34,8 +49,12 @@ export default function VideoThumbnailItem({
           </View>
 
           <View style={styles.likes}>
-            <Text style={styles.likesText}>36</Text>
-            <FontAwesome name="heart" size={12} color="white" />
+            <FontAwesome
+              name={likeCount > 0 ? "heart" : "heart-o"}
+              size={12}
+              color={likeCount > 0 ? "#ff2d55" : "white"}
+            />
+            {likeCount > 0 && <Text style={styles.likesText}>{likeCount}</Text>}
           </View>
         </View>
       </View>

@@ -1,14 +1,21 @@
 import PlayListItem from "@/components/ui/playListItem";
+import { supabase } from "@/lib/supabase";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { FlatList, StatusBar, View } from "react-native";
 
 export default function PlayVideoListScreen() {
   const { videos: videosParam, initialIndex: indexParam } =
     useLocalSearchParams();
 
-  const videos: any[] = videosParam ? JSON.parse(videosParam as string) : [];
+  const initialVideos: any[] = videosParam
+    ? JSON.parse(videosParam as string)
+    : [];
   const startIndex = indexParam ? parseInt(indexParam as string) : 0;
+
+  const [videoList, setVideoList] = useState(initialVideos);
+  const loadOffset = useRef(initialVideos.length);
+  const loadingMore = useRef(false);
 
   const [visibleIndex, setVisibleIndex] = useState(startIndex);
   const [listHeight, setListHeight] = useState(0);
@@ -25,16 +32,25 @@ export default function PlayVideoListScreen() {
     [],
   );
 
-  useEffect(() => {
-    if (listHeight > 0 && startIndex > 0) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: startIndex * listHeight,
-          animated: false,
-        });
-      }, 50);
+  const loadMore = async () => {
+    if (loadingMore.current) return;
+    loadingMore.current = true;
+    const offset = loadOffset.current;
+    const { data } = await supabase
+      .from("PostLists")
+      .select(`*, userId:Users (profileImage, username)`)
+      .range(offset, offset + 7)
+      .order("created_at", { ascending: false });
+    if (data && data.length > 0) {
+      setVideoList((prev) => {
+        const existingIds = new Set(prev.map((v) => v.id));
+        const fresh = data.filter((v) => !existingIds.has(v.id));
+        return [...prev, ...fresh];
+      });
+      loadOffset.current = offset + data.length;
     }
-  }, [listHeight]);
+    loadingMore.current = false;
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
@@ -46,7 +62,7 @@ export default function PlayVideoListScreen() {
         {listHeight > 0 && (
           <FlatList
             ref={flatListRef}
-            data={videos}
+            data={videoList}
             keyExtractor={(item) => item.id?.toString()}
             renderItem={({ item, index }) => (
               <PlayListItem
@@ -58,6 +74,14 @@ export default function PlayVideoListScreen() {
             )}
             pagingEnabled
             showsVerticalScrollIndicator={false}
+            initialScrollIndex={startIndex}
+            getItemLayout={(_data, index) => ({
+              length: listHeight,
+              offset: listHeight * index,
+              index,
+            })}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
             viewabilityConfig={viewabilityConfig.current}
             onViewableItemsChanged={onViewableItemsChanged}
           />

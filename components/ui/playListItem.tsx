@@ -1,3 +1,5 @@
+import { supabase } from "@/lib/supabase";
+import { useUser } from "@clerk/expo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image } from "expo-image";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -17,13 +19,37 @@ export default function PlayListItem({
   onBack,
   itemHeight,
 }: Props) {
+  const { user } = useUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
+
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(36);
+  const [likeCount, setLikeCount] = useState(0);
   const [paused, setPaused] = useState(false);
 
   const player = useVideoPlayer(video?.videoUrl ?? null, (p) => {
     p.loop = true;
   });
+
+  useEffect(() => {
+    if (!userEmail || !video?.id) return;
+    const fetchLikeStatus = async () => {
+      const { data: likeData } = await supabase
+        .from("VideoLikes")
+        .select("id")
+        .eq("userEmail", userEmail)
+        .eq("postIdRef", video.id)
+        .maybeSingle();
+
+      const { count } = await supabase
+        .from("VideoLikes")
+        .select("id", { count: "exact", head: true })
+        .eq("postIdRef", video.id);
+
+      setLiked(!!likeData);
+      setLikeCount(count ?? 0);
+    };
+    fetchLikeStatus();
+  }, [userEmail, video?.id]);
 
   useEffect(() => {
     if (!isVisible) {
@@ -32,6 +58,26 @@ export default function PlayListItem({
       player.play();
     }
   }, [isVisible]);
+
+  const handleLike = async () => {
+    if (!userEmail || !video?.id) return;
+
+    if (liked) {
+      await supabase
+        .from("VideoLikes")
+        .delete()
+        .eq("userEmail", userEmail)
+        .eq("postIdRef", video.id);
+      setLiked(false);
+      setLikeCount((c) => c - 1);
+    } else {
+      await supabase
+        .from("VideoLikes")
+        .insert({ userEmail, postIdRef: video.id });
+      setLiked(true);
+      setLikeCount((c) => c + 1);
+    }
+  };
 
   const togglePlayPause = () => {
     if (paused) {
@@ -81,24 +127,13 @@ export default function PlayListItem({
             />
           </View>
 
-          <TouchableOpacity
-            style={styles.actionItem}
-            onPress={() => {
-              setLiked(!liked);
-              setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-            }}
-          >
+          <TouchableOpacity style={styles.actionItem} onPress={handleLike}>
             <FontAwesome
               name={liked ? "heart" : "heart-o"}
               size={32}
               color={liked ? "#ff2d55" : "white"}
             />
             <Text style={styles.actionLabel}>{likeCount}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionItem}>
-            <FontAwesome name="comment" size={30} color="white" />
-            <Text style={styles.actionLabel}>12</Text>
           </TouchableOpacity>
         </View>
 
@@ -188,5 +223,5 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.9)",
     fontSize: 14,
     lineHeight: 19,
-  }
+  },
 });
