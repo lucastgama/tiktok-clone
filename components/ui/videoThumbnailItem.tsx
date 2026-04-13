@@ -73,7 +73,7 @@ export default function VideoThumbnailItem({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "50%",
     margin: 5,
   },
   singleContainer: {
