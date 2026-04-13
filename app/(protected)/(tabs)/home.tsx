@@ -4,6 +4,8 @@ import { useUser } from "@clerk/expo";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
+const PAGE_SIZE = 8;
+
 export default function HomeScreen() {
   const { user } = useUser();
   const [videoList, setVideoList] = useState<any[]>([]);
@@ -14,7 +16,7 @@ export default function HomeScreen() {
     if (!user?.id) return;
 
     syncUser();
-    getAllVideos();
+    getAllVideos(true);
   }, [user?.id]);
 
   useEffect(() => {
@@ -40,19 +42,47 @@ export default function HomeScreen() {
     }
   };
 
-  const getAllVideos = async () => {
+  const getAllVideos = async (reset = false) => {
     setLoading(true);
+
+    const from = reset ? 0 : loadCounter;
+    const to = from + PAGE_SIZE - 1;
+
     const { data, error } = await supabase
       .from("PostLists")
       .select(`*, userId:Users (profileImage, username)`)
-      .range(loadCounter, loadCounter + 7)
+      .range(from, to)
       .order("created_at", { ascending: false });
 
     if (error) {
       setLoading(false);
       return;
     }
-    setVideoList((videoList) => [...videoList, ...(data as any)]);
+
+    const nextVideos = (data as any[]) ?? [];
+
+    const sortedVideos = [...nextVideos].sort((firstVideo, secondVideo) => {
+      const firstIsCurrentUser = firstVideo?.clerkId === user?.id ? 1 : 0;
+      const secondIsCurrentUser = secondVideo?.clerkId === user?.id ? 1 : 0;
+
+      if (firstIsCurrentUser !== secondIsCurrentUser) {
+        return secondIsCurrentUser - firstIsCurrentUser;
+      }
+
+      return 0;
+    });
+
+    setVideoList((currentVideos) => {
+      if (reset) {
+        return sortedVideos;
+      }
+
+      const mergedVideos = [...currentVideos, ...sortedVideos];
+      return mergedVideos.filter(
+        (video, index, array) =>
+          array.findIndex((item) => item?.id === video?.id) === index,
+      );
+    });
     setLoading(false);
   };
 
@@ -76,10 +106,20 @@ export default function HomeScreen() {
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-        onRefresh={getAllVideos}
+        onRefresh={() => {
+          setLoadCounter(0);
+          getAllVideos(true);
+        }}
         refreshing={loading}
-        onEndReached={() => setLoadCounter((prev) => prev + 8)}
+        onEndReached={() => setLoadCounter((prev) => prev + PAGE_SIZE)}
         onEndReachedThreshold={0.2}
+        ListEmptyComponent={
+          !loading ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>Nenhum vídeo encontrado</Text>
+            </View>
+          ) : null
+        }
       />
     </View>
   );
@@ -110,5 +150,21 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 48,
+    gap: 8,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111",
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#666",
+    lineHeight: 20,
   },
 });

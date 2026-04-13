@@ -8,8 +8,16 @@ export default function VideoThumbnailItem({
   video,
   videoList,
   videoIndex,
+  layout = "grid",
 }: any) {
   const [likeCount, setLikeCount] = useState(0);
+
+  const username =
+    video?.userId?.username?.split(".")[0] ??
+    video?.emailRef?.split("@")[0] ??
+    "user";
+
+  const avatarUri = video?.userId?.profileImage ?? null;
 
   useEffect(() => {
     if (!video?.id) return;
@@ -25,7 +33,7 @@ export default function VideoThumbnailItem({
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, layout === "single" && styles.singleContainer]}
       onPress={() =>
         router.push({
           pathname: "/play",
@@ -39,13 +47,12 @@ export default function VideoThumbnailItem({
       <View style={styles.overlay}>
         <View style={styles.rowBetween}>
           <View style={styles.userInfo}>
-            <Image
-              source={{ uri: video?.userId.profileImage }}
-              style={styles.avatar}
-            />
-            <Text style={styles.username}>
-              {video?.userId.username.split(".")[0]}
-            </Text>
+            {avatarUri ? (
+              <Image source={{ uri: avatarUri }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarFallback} />
+            )}
+            <Text style={styles.username}>{username}</Text>
           </View>
 
           <View style={styles.likes}>
@@ -68,6 +75,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 5,
+  },
+  singleContainer: {
+    flex: undefined,
+    width: "100%",
+    marginHorizontal: 0,
+    marginBottom: 12,
   },
   overlay: {
     position: "absolute",
@@ -92,6 +105,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     backgroundColor: "white",
+    borderRadius: 50,
+  },
+  avatarFallback: {
+    width: 20,
+    height: 20,
+    backgroundColor: "rgba(255,255,255,0.7)",
     borderRadius: 50,
   },
   username: {
