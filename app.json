@@ -39,7 +39,11 @@
           }
         }
       ],
-      "expo-video"
+      "expo-video",
+      "@clerk/expo",
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-image-picker"
     ],
     "experiments": {
       "typedRoutes": true,

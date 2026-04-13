@@ -1,0 +1,134 @@
+import { supabase } from "@/lib/supabase";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+export default function VideoThumbnailItem({
+  video,
+  videoList,
+  videoIndex,
+  layout = "grid",
+}: any) {
+  const [likeCount, setLikeCount] = useState(0);
+
+  const username =
+    video?.userId?.username?.split(".")[0] ??
+    video?.emailRef?.split("@")[0] ??
+    "user";
+
+  const avatarUri = video?.userId?.profileImage ?? null;
+
+  useEffect(() => {
+    if (!video?.id) return;
+    const fetchLikes = async () => {
+      const { count } = await supabase
+        .from("VideoLikes")
+        .select("id", { count: "exact", head: true })
+        .eq("postIdRef", video.id);
+      setLikeCount(count ?? 0);
+    };
+    fetchLikes();
+  }, [video?.id]);
+
+  return (
+    <TouchableOpacity
+      style={[styles.container, layout === "single" && styles.singleContainer]}
+      onPress={() =>
+        router.push({
+          pathname: "/play",
+          params: {
+            videos: JSON.stringify(videoList ?? [video]),
+            initialIndex: videoIndex ?? 0,
+          },
+        })
+      }
+    >
+      <View style={styles.overlay}>
+        <View style={styles.rowBetween}>
+          <View style={styles.userInfo}>
+            {avatarUri ? (
+              <Image source={{ uri: avatarUri }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarFallback} />
+            )}
+            <Text style={styles.username}>{username}</Text>
+          </View>
+
+          <View style={styles.likes}>
+            <FontAwesome
+              name={likeCount > 0 ? "heart" : "heart-o"}
+              size={12}
+              color={likeCount > 0 ? "#ff2d55" : "white"}
+            />
+            {likeCount > 0 && <Text style={styles.likesText}>{likeCount}</Text>}
+          </View>
+        </View>
+      </View>
+
+      <Image source={{ uri: video?.thumbnail }} style={styles.thumbnail} />
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: "50%",
+    margin: 5,
+  },
+  singleContainer: {
+    flex: undefined,
+    width: "100%",
+    marginHorizontal: 0,
+    marginBottom: 12,
+  },
+  overlay: {
+    position: "absolute",
+    zIndex: 10,
+    bottom: 0,
+    padding: 10,
+    width: "100%",
+  },
+  rowBetween: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 3,
+    width: "100%",
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  avatar: {
+    width: 20,
+    height: 20,
+    backgroundColor: "white",
+    borderRadius: 50,
+  },
+  avatarFallback: {
+    width: 20,
+    height: 20,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    borderRadius: 50,
+  },
+  username: {
+    color: "white",
+    fontSize: 12,
+  },
+  likes: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  likesText: {
+    color: "white",
+    fontSize: 12,
+  },
+  thumbnail: {
+    width: "100%",
+    height: 250,
+    borderRadius: 10,
+  },
+});

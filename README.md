@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# TikTok Clone (Expo + Clerk + AWS + Supabase)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Este projeto consiste em um clone do TikTok desenvolvido com React Native (Expo), com foco no aprimoramento de práticas modernas de arquitetura mobile e integração com serviços em nuvem.
 
-## Get started
+## Referência
 
-1. Install dependencies
+https://www.youtube.com/watch?v=L2tz0WAfQIU
 
-   ```bash
-   npm install
-   ```
+## Objetivo
 
-2. Start the app
+O projeto tem como objetivo desenvolver experiência em:
 
-   ```bash
-   npx expo start
-   ```
+- Integração com AWS para armazenamento de vídeos e thumbnails
+- Autenticação utilizando Clerk
+- Gerenciamento de dados com Supabase
+- Organização de projetos escaláveis em React Native
 
-In the output, you'll find options to open the app in a
+## Arquitetura
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+A aplicação utiliza:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Expo Router (file-based routing) para navegação
+- Estrutura modular com separação de responsabilidades
 
-## Get a fresh project
+### Estrutura principal
 
-When you're ready, run:
+```
+app/
+ ├── (tabs)/# Navegação principal (home, explore, etc)
+ ├── (protected)/# Rotas protegidas por autenticação
+ ├── login.tsx# Tela de login
+ ├── _layout.tsx# Layout global
 
-```bash
-npm run reset-project
+components/# Componentes reutilizáveis
+hooks/# Hooks customizados
+lib/# Integrações (API, AWS, Supabase, Clerk)
+constants/# Constantes globais
+assets/# Recursos estáticos
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Autenticação
 
-## Learn more
+A autenticação é gerenciada pelo Clerk, com rotas protegidas organizadas no diretório `(protected)`.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Backend e serviços
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- AWS S3 para armazenamento de vídeos e thumbnails
+- Supabase para persistência de dados de usuários e configurações
+- Clerk para autenticação e gerenciamento de usuários
 
-## Join the community
+## Decisões de implementação
 
-Join our community of developers creating universal apps.
+Durante o desenvolvimento, optei por:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Organizar as rotas com base no nível de acesso (público e protegido)
+- Utilizar layouts específicos por grupo de páginas
+- Padronizar nomes de arquivos em minúsculo
+- Nomear funções com inicial maiúscula
+- Identificar telas de visualização com o sufixo `Screen`
+
+Essas escolhas diferem do padrão apresentado no vídeo utilizado como referência, mas foram adotadas para melhorar a organização e a clareza do projeto.
+
+## Aprendizados
+
+Este projeto contribuiu para:
+
+- Melhor entendimento de estruturação de aplicações escaláveis
+- Separação entre interface, lógica e integrações externas
+- Preparação para adoção futura de padrões como MVC ou Clean Architecture
+
+## Próximos passos(Assim que possivel)
+
+- Evoluir a arquitetura para um padrão mais estruturado (MVC ou Clean Architecture)
+- Separar de forma mais clara a camada de serviços (API)
+- Implementar estratégias de cache e otimização de performance
+- Melhorar o gerenciamento de estado
